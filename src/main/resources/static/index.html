@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrappyChat</title>
+</head>
+<body>
+    <form id="frm1" action="chat.html">
+        Name: <input type="text" name="name"><br>
+        Server link: <input type="text" name="server"><br><br>
+        <input type="button" onclick="logIn()" value="Log in">
+    </form>
+
+    <script>
+        function logIn() {
+            document.getElementById("frm1").submit();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrappyChat</title>
+    <style>
+        #message-form {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: beige;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="message-box"></div>
+    <div id="message-form">
+        <form id="send-message" action="">
+            Message: <input type="text" name="name" id="message">
+            <input type="button" onclick="sendMessage()" value="Send">
+        </form>
+    </div>
+
+    <script defer>
+        const URL = new URLSearchParams(window.location.search)
+        const NAME = URL.get("name")
+        const SERVER = URL.get("server")
+        const HEADERS = {
+            GET: {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            },
+            POST: {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            },
+        }
+
+        function getMessages() {
+            return fetch(SERVER, HEADERS.GET)
+                .then(response => response.json());
+        }
+
+        function renderMessages(messages) {
+            document.getElementById("message-box").innerHTML = ""
+            for (const message of messages) {
+                let paragraph = document.createElement("P");
+                paragraph.innerHTML = `<strong>${message.name}</strong><br>${message.text}`;
+                document.getElementById("message-box").appendChild(paragraph);
+            }
+        }
+        function getMessageText() {
+            return document.getElementById("message").value
+        }
+        function postMessage(name, text) {
+            let messageWithBody = HEADERS.POST;
+            messageWithBody.body = JSON.stringify({ "name": name, "text": text });
+
+            fetch(SERVER, messageWithBody);
+        }
+
+        async function loadMessages() {
+            renderMessages(await getMessages())
+        }
+        function sendMessage() {
+            postMessage(NAME, getMessageText())
+        }
+
+        async function main() {
+            loadMessages();
+            while(true) {
+                await new Promise(resolve => setTimeout(resolve, 20));
+                loadMessages();
+            }
+        }
+        main();
+    </script>
+</body>
+</html>
